@@ -1,0 +1,68 @@
+﻿@model IEnumerable<WebBanHangOnline.Models.ShoppingCartItem>
+@using WebBanHangOnline.Common
+<div id="load_data">
+    <table class="table">
+        <thead class="thead-primary">
+            <tr class="text-center">
+                <th>&nbsp;</th>
+                <th>&nbsp;</th>
+                <th>Sản phẩm</th>
+                <th>Giá</th>
+                <th>Số lượng</th>
+                <th>Thành tiền</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                var tongtien = decimal.Zero;
+                foreach (var item in Model)
+                {
+                    tongtien += item.TotalPrice;
+                    <tr class="text-center" id="trow_@item.ProductId">
+                        <td class="product-remove">
+                            <a href="#" class="btn btn-sm btn-danger btnDelete" data-id="@item.ProductId" data-fragrance="@item.Fragrance"><span class="ion-ios-close"></span></a>
+                           
+                        </td>
+                        <td class="image-prod">
+                            @{
+                                var imageUrl = string.IsNullOrEmpty(item.ProductImg)
+                                    ? "/Content/assets/images/no-image.png"
+                                    : item.ProductImg;
+                            }
+                            <div class="img" style="background-image:url('@imageUrl');"></div>
+                        </td>
+                        <td class="product-name" data-label="Sản phẩm">
+                            <h3>@item.ProductName @(string.IsNullOrEmpty(item.Fragrance) ? "" : " - " + item.Fragrance)</h3>
+                        </td>
+                        <td class="price"  data-label="Giá" >@Common.FormatNumber(item.Price, 0)</td>
+                        <td class="quantity" data-label="Số lượng">
+                            <div class="input-group mb-3">
+                                <input type="number" value="@item.Quantity"
+                                       class="form-control txtQuantity"
+                                       data-id="@item.ProductId"
+                                       data-fragrance="@item.Fragrance"
+                                       min="1" max="100"/>
+                            </div>
+                        </td>
+                        <td class="total" data-label="Thành tiền">@Common.FormatNumber(item.TotalPrice, 2)</td>
+                        <td>
+                            <a href="" class="btn btn-sm btn-primary btnUpdate" data-id="@item.ProductId" data-fragrance="@item.Fragrance">Cập nhật</a>
+                        </td>
+                    </tr>
+                }
+                <tr>
+                    <th colspan="5" class="text-right"><h4>Tổng: </h4></th>
+                    <th class="text-center"><h4>@Common.FormatNumber(tongtien, 0)</h4></th>
+                </tr>
+            }
+            else
+            {
+                <tr>
+                    <th colspan="7" class="text-center">Không có sản phẩm trong giỏ hàng</th>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

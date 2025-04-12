@@ -1,0 +1,35 @@
+﻿@model IEnumerable<WebBanHangOnline.Models.EF.ProductCategory>
+
+@if (Model != null && Model.Any())
+{
+    <div class="row justify-content-center">
+        <div class="col-md-10 mb-5 text-center">
+            <ul class="product-category ftco-animate">
+                <li>
+                    <a href="/san-pham" class="@(ViewBag.CateId == null ? "active" : "")">Tất cả</a>
+                </li>
+                @foreach (var item in Model)
+                {
+                    <li>
+                        <a href="/danh-muc-san-pham/@item.Alias-@(item.Id)" class="@(ViewBag.CateId == item.Id ? "active" : "")">
+                            @item.Title
+                        </a>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+    <div class="row justify-content-center mb-5 pb-3">
+        <div class="col-md-12 heading-section ftco-animate text-center">
+
+            @foreach (var item in Model)
+            {
+                if (ViewBag.CateId == item.Id)
+                {
+                    <span class="subheading" style="font-size: 29px">@item.SeoDescription</span><br />
+                }
+            }
+
+        </div>
+    </div>
+}

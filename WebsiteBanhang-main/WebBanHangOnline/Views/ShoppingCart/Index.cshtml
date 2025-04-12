@@ -1,0 +1,32 @@
+﻿
+@using WebBanHangOnline.Common
+@{
+    ViewBag.Title = "Giở hàng";
+
+}
+
+@Html.Action("MenuSlide", "Menu")
+<section class="ftco-section ftco-cart">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 ftco-animate">
+                <div id="load_data" class="cart-list">
+                    @Html.Action("Partial_Item_Cart", "ShoppingCart")
+
+                </div>
+            </div>
+        </div>
+        <div class="row justify-content-end">
+            @if (ViewBag.CheckCart != null)
+            {
+                <div class="text-right">
+                    <a href="#" class="btn btn-danger btnDeleteAll">Xóa tất cả</a>
+                    <a href="/thanh-toan" class="btn btn-success">Thanh toán</a>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+@section scripts{
+    <script src="~/Content/assets/js/categories_custom.js"></script>
+}

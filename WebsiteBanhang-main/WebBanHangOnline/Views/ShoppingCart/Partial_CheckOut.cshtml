@@ -1,0 +1,359 @@
+﻿@model WebBanHangOnline.Models.OrderViewModel
+@{
+    if (ViewBag.User != null)
+    {
+        // code nếu có User
+    }
+}
+
+@using (Ajax.BeginForm("CheckOut", "Shoppingcart", new AjaxOptions
+{
+    HttpMethod = "POST",
+    UpdateTargetId = "load_data",  // Cập nhật lại phần tử có id là load_data sau khi form được gửi thành công
+    OnSuccess = "OnSuccessCO",  // Hàm xử lý khi form được gửi thành công
+    OnFailure = "OnFailure",  // Hàm xử lý khi có lỗi xảy ra
+    OnBegin = "OnBeginCO"  // Hàm xử lý khi bắt đầu gửi form
+}, new { @Id = "form-checkout" }))
+{
+    <script>
+        // Gửi kèm AntiForgeryToken trong Ajax
+        $(document).ready(function () {
+            // Gắn AntiForgeryToken cho mọi Ajax request
+            $.ajaxSetup({
+                headers: {
+                    'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                }
+            });
+
+            // Lắng nghe sự kiện submit của form
+            $('#form-checkout').on('submit', function (e) {
+                e.preventDefault();  // Ngừng hành động mặc định của form
+
+                // Kiểm tra validation trước khi gửi
+                if ($('#form-checkout').valid()) {  // Kiểm tra tính hợp lệ của form
+                    console.log("Form is valid, sending request...");
+
+                    var formData = $(this).serialize();  // Lấy dữ liệu từ form
+                    OnBegin();  // Gọi hàm OnBegin để xử lý khi bắt đầu gửi form
+
+                    $.ajax({
+                        url: '/ShoppingCart/CheckOut',
+                        type: 'POST',
+                        data: formData,
+                        success: function (res) {
+                            OnSuccess(res);  // Gọi hàm xử lý khi form gửi thành công
+                        },
+                        error: function (err) {
+                            OnFailure(err);  // Gọi hàm xử lý khi có lỗi
+                        }
+                    });
+                } else {
+                    console.log("Form validation failed!");  // Nếu form không hợp lệ, không gửi form
+                    $('#btnCheckOut').prop('disabled', false).text("Đặt hàng"); // Bật lại nút Đặt hàng
+                }
+            });
+
+            function OnBegin() {
+                console.log("Sending request...");  // Kiểm tra xem OnBegin có được gọi không
+                $('#btnCheckOut').prop('disabled', true).text("Đang xử lý...");
+                $('#load_send').html('<h4>Đang xử lý đơn hàng...</h4>');
+            }
+
+            function OnSuccess(res) {
+                if (res.Success) {
+                    if (res.Code == 1) {
+                        // Kiểm tra nếu đang trên ngrok
+                        var baseUrl = window.location.origin;  // Lấy tên miền hiện tại (ngrok hoặc localhost)
+                        var redirectUrl = baseUrl + res.Url;  // Tạo URL tuyệt đối
+
+                        location.href = redirectUrl;  // Chuyển hướng đến URL tuyệt đối
+                    } else {
+                        // Chuyển hướng đến URL trả về từ server nếu có
+                        var relativeUrl = res.Url.startsWith('http') ? res.Url : window.location.origin + res.Url;
+                        location.href = relativeUrl;  // Chuyển hướng đến URL tuyệt đối nếu là đường dẫn tương đối
+                    }
+
+                }
+            }
+
+            function OnFailure(error) {
+                console.error("Error:", error);
+                alert("Đã có lỗi xảy ra khi gửi đơn hàng.");
+                $('#btnCheckOut').prop('disabled', false).text("Đặt hàng");  // Kích hoạt lại nút Đặt hàng
+            }
+
+            // Kích hoạt validation cho form
+            $("#form-checkout").validate({
+                rules: {
+                    CustomerName: {
+                        required: true
+                    },
+                    Phone: {
+                        required: true,
+                        regex: /^[0](3|5|7|8|9)\d{8}$/,  // Kiểm tra định dạng số điện thoại
+                        maxlength: 10,  // Đảm bảo số điện thoại có tối đa 10 chữ số
+                        minlength: 10   // Đảm bảo số điện thoại có tối thiểu 10 chữ số
+                    },
+                    Email: {
+                        required: true,
+                        email: true
+                    },
+                    Address: {
+                        required: true
+                    }
+                },
+                messages: {
+                    CustomerName: {
+                        required: "Vui lòng nhập họ tên"
+                    },
+                    Phone: {
+                        required: "Vui lòng nhập số điện thoại",
+                        regex: "Số điện thoại không hợp lệ.",
+                        maxlength: "Số điện thoại không được quá 10 chữ số",
+                        minlength: "Số điện thoại phải có 10 chữ số"
+                    },
+                    Email: {
+                        required: "Vui lòng nhập email",
+                        email: "Vui lòng nhập email hợp lệ"
+                    },
+                    Address: {
+                        required: "Vui lòng nhập địa chỉ"
+                    }
+                },
+                submitHandler: function (form) {
+                    // Nếu validation thành công, gửi form qua Ajax
+                    form.submit();
+                }
+            });
+        });
+
+
+
+    </script>
+    @Html.AntiForgeryToken()
+
+    <h3>Thông tin khách hàng</h3>
+
+    if (!Request.IsAuthenticated)
+    {
+        <div class="form-group">
+            <label>Họ tên khách hàng</label>
+            <input type="text" name="CustomerName" required class="form-control" autocomplete="off" />
+        </div>
+
+        <div class="form-group">
+            <label>Số điện thoại</label>
+            <input type="text" name="Phone" class="form-control" autocomplete="off" required />
+            <span class="text-danger" data-valmsg-for="Phone" data-valmsg-replace="true"></span>
+        </div>
+
+        <div class="form-group">
+            <label>Địa chỉ</label>
+            <input type="text" id="address" name="Address" class="form-control" required placeholder="Nhập địa chỉ của bạn" autocomplete="off" />
+            <div id="suggestions" class="suggestions"></div>
+        </div>
+
+        <div class="form-group">
+            <label>Email nhận đơn hàng</label>
+            <input type="email" name="Email" class="form-control" autocomplete="off" required />
+            <span class="text-danger" data-valmsg-for="Email" data-valmsg-replace="true"></span>
+        </div>
+    }
+    else
+    {
+        var user = (WebBanHangOnline.Models.ApplicationUser)ViewBag.User;
+        <div class="form-group">
+            <label>Họ tên khách hàng</label>
+            <input type="text" name="CustomerName" value="@user.FullName" class="form-control" autocomplete="off" required/>
+        </div>
+        <div class="form-group">
+            <label>Số điện thoại</label>
+            <input type="text" name="Phone" value="@user.Phone" class="form-control" autocomplete="off" required/>
+        </div>
+        <div class="form-group">
+            <label>Địa chỉ</label>
+            <input type="text" id="address" name="Address" class="form-control" required placeholder="Nhập địa chỉ của bạn" autocomplete="off" required/>
+            <div id="suggestions" class="suggestions"></div>
+        </div>
+
+        <div class="form-group">
+            <label>Email nhận đơn hàng</label>
+            <input type="text" name="Email" value="@user.Email" class="form-control" autocomplete="off" required/>
+        </div>
+    }
+
+    <div class="form-group">
+        <label>Hình thức thanh toán</label>
+        <select class="form-control" name="TypePayment" id="drTypePayment">
+            <option value="1" selected>COD</option>
+            <option value="2">Chuyển khoản</option>
+        </select>
+    </div>
+
+    <div class="form-group" id="load_form_payment" style="display:none;">
+        <h4><label>Chọn phương thức thanh toán:</label><br /></h4>
+        <h5>Cách 1: Chuyển hướng sang VNPAY chọn phương thức thanh toán</h5>
+        <label><input type="radio" name="TypePaymentVN" value="0" checked /> Cổng thanh toán VNPAYQR </label>
+        <h5>Cách 2: Tách phương thức thanh toán tại site của Merchant</h5>
+        <label><input type="radio" name="TypePaymentVN" value="1" /> Thanh toán qua ứng dụng hỗ trợ VNPAYQR </label><br />
+        <label><input type="radio" name="TypePaymentVN" value="2" /> ATM-Tài khoản ngân hàng nội địa </label><br />
+        <label><input type="radio" name="TypePaymentVN" value="3" /> Thanh toán qua thẻ quốc tế </label><br />
+    </div>
+
+    <div class="form-group" id="load_send"></div>
+
+    <div class="form-group">
+        <button type="submit" class="btn btn-block btn-success" id="btnCheckOut">Đặt hàng</button>
+    </div>
+}
+<script>
+    const apiKey = 'DTYUCwvekxs7OEbK3S14gCfpQEXauEKRBHxrmPxP'; // https://account.goong.io/keys
+    const addressInput = document.getElementById('address');
+    const suggestionsContainer = document.getElementById('suggestions');
+    const cityInput = document.getElementById('city');
+    const districtInput = document.getElementById('district');
+    const wardInput = document.getElementById('ward');
+    let sessionToken = crypto.randomUUID();
+
+    function debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    }
+
+    const debouncedSearch = debounce((query) => {
+        if (query.length < 2) {
+            suggestionsContainer.style.display = 'none';
+            return;
+        }
+
+        fetch(`https://rsapi.goong.io/Place/AutoComplete?api_key=${apiKey}&input=${encodeURIComponent(query)}&sessiontoken=${sessionToken}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'OK') {
+                    suggestionsContainer.innerHTML = '';
+                    suggestionsContainer.style.display = 'block';
+
+                    data.predictions.forEach(prediction => {
+                        const div = document.createElement('div');
+                        div.className = 'suggestion-item';
+                        div.textContent = prediction.description;
+                        div.addEventListener('click', () => {
+                            addressInput.value = prediction.description;
+                            suggestionsContainer.style.display = 'none';
+
+                        });
+                        suggestionsContainer.appendChild(div);
+                    });
+                }
+            })
+            .catch(error => console.error('Lỗi:', error));
+    }, 300);
+
+    addressInput.addEventListener('input', (e) => debouncedSearch(e.target.value));
+
+    document.addEventListener('click', function (e) {
+        if (!suggestionsContainer.contains(e.target) && e.target !== addressInput) {
+            suggestionsContainer.style.display = 'none';
+        }
+    });
+
+    //document.getElementById('checkoutForm').addEventListener('submit', function (e) {
+    //    e.preventDefault();
+    //    sessionToken = crypto.randomUUID();
+    //});
+</script>
+<style>
+    .suggestions {
+        position: absolute;
+        background: #6a96fc;
+        width: 100%;
+        max-height: 300px;
+        overflow-y: auto;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        border-radius: 8px;
+        z-index: 1000;
+        display: none;
+        margin-top: 3px;
+        border: 1px solid #487cff;
+    }
+
+    .suggestion-item {
+        padding: 12px 16px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        border-bottom: 1px solid #3f4451;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        background: #e7f9ff;
+    }
+
+        .suggestion-item:last-child {
+            border-bottom: none;
+        }
+
+        .suggestion-item:before {
+            content: "📍";
+            margin-right: 10px;
+            font-size: 1.1em;
+            transition: transform 0.3s ease;
+        }
+
+        .suggestion-item:hover {
+            background: #0353ff;
+            color: #ffffff;
+            padding-left: 24px;
+        }
+
+            .suggestion-item:hover:before {
+                transform: scale(1.2);
+            }
+
+        .suggestion-item:after {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background: var(--primary);
+            transform: scaleY(0);
+            transition: transform 0.3s ease;
+        }
+
+        .suggestion-item:hover:after {
+            transform: scaleY(1);
+        }
+
+    .address-container {
+        position: relative;
+        margin-bottom: 20px;
+    }
+
+    /* Tùy chỉnh thanh cuộn */
+    .suggestions::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .suggestions::-webkit-scrollbar-track {
+        background: #6b96fa;
+        border-radius: 8px;
+    }
+
+    .suggestions::-webkit-scrollbar-thumb {
+        background: #7ca1ff;
+        border-radius: 8px;
+    }
+
+        .suggestions::-webkit-scrollbar-thumb:hover {
+            background: #7499ff;
+        }
+</style>

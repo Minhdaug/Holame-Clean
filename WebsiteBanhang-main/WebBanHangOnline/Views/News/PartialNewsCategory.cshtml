@@ -1,0 +1,24 @@
+﻿@model IEnumerable<WebBanHangOnline.Models.ViewModels.NewsCategoryViewModel>
+
+@{
+    var totalNewsCount = Model.Sum(x => x.NewsCount);
+}
+
+<div class="sidebar-box ftco-animate">
+    <h3 class="heading">Danh mục</h3>
+    <ul class="categories">
+        <li>
+            <a href="@Url.Action("Index", "News")">
+                Tất cả <span>(@totalNewsCount)</span>
+            </a>
+        </li>
+        @foreach (var item in Model)
+        {
+            <li>
+                <a href="@Url.Action("Category", "News", new { id = item.Id })">
+                    @item.Title <span>(@item.NewsCount)</span>
+                </a>
+            </li>
+        }
+    </ul>
+</div>

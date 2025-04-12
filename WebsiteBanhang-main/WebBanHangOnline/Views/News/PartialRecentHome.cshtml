@@ -1,0 +1,39 @@
+﻿@model List<WebBanHangOnline.Models.EF.News>
+<section class="ftco-section ftco-category ftco-no-pt" style="background-color: rgb(255, 248, 255) ">
+    <div class="container">       
+        <div class="row">
+            <div class="container text-center">
+                <h2 class="section-title mb-5 text-success ftco-animate" style="font-weight: 600; margin-top: 1cm; font-size: 55px">Recent Blog</h2>
+                <div class="row">
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var item in Model)
+                        {
+                            <div class="col-md-6 col-lg-4 ftco-animate">
+                                <div class="product">
+                                    <a href="/chi-tiet/@item.Alias-p@(item.Id)" class="img-prod">
+                                        <div class="product-img-wrapper">
+                                            <img class="img-fluid product-img" src="@item.Image" alt="@item.Title" loading="lazy"/>
+                                        </div>                                      
+                                        <div class="overlay"></div>
+                                    </a>
+                                    <div class="text py-3 pb-4 px-3 text-center">
+                                        <h3>
+                                            <a href="/chi-tiet/@item.Alias-p@(item.Id)">
+                                                @item.Title
+                                            </a>
+                                        </h3>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                    <!-- Nút Xem Toàn Bộ căn giữa -->
+                    
+                </div>
+                <a href="/tin-tuc" class="btn btn-outline-success mt-3 ftco-animate">Xem Toàn Bộ</a>
+            </div>
+        </div>
+    </div>
+</section>
+

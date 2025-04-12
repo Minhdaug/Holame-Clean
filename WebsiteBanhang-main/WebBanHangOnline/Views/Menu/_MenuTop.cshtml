@@ -1,0 +1,21 @@
+﻿@model IEnumerable<WebBanHangOnline.Models.EF.Category>
+
+@if (Model != null && Model.Any())
+{
+    <ul class="navbar-nav ml-auto main-menu">
+        @foreach (var item in Model)
+        {
+            if (item.Alias.Equals("trang-chu"))
+            {
+                item.Alias = "";
+            }
+            if (!string.IsNullOrEmpty(item.Link))
+            {
+                item.Alias = item.Link;
+            }
+            <li class="nav-item"><a class="nav-link" href="/@item.Alias" style=" font-weight: bold; font-size: 14px; font-family: 'Segoe UI'; color: forestgreen">@item.Title</a></li>
+
+        }
+        <li class="nav-item cta cta-colored"><a href="/gio-hang" class="nav-link"><span class="icon-shopping_cart" style=" font-weight: bold; font-size: 14px;"></span></a></li>
+    </ul>
+}

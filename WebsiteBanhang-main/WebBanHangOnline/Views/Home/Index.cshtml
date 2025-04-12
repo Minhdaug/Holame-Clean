@@ -1,0 +1,73 @@
+﻿@{
+    ViewBag.Title = "Shop Online";
+    ViewBag.SeoDescription = "Shop Online";
+}
+
+@Html.Action("MenuSlide", "Menu")
+@Html.Action("MenuNhanxet", "Menu")
+
+
+@Html.Action("MenuCategory", "Menu")
+
+@Html.Action("Menu4", "Menu")
+
+@Html.Action("Partial_ItemsHome", "Products")
+@Html.Action("Partial_ProductSales", "Products")
+
+@Html.Action("MenuHolame", "Menu")
+
+<section class="ftco-section img ftco-animate" style="background-image: url(../Content/assets/images/qua.webp); background-size: contain; /* Hiển thị toàn bộ ảnh */ background-repeat: no-repeat; /* Không lặp ảnh */ background-position: center; /* Căn giữa ảnh */ width: 100vw; /* Chiếm toàn bộ chiều rộng màn hình */ height: auto; min-height: 300px; /* Có thể điều chỉnh theo ảnh thực tế */ padding-top: 30%; ">
+</section>
+@Html.Action("PartialRecentHome", "News")
+@Html.Action("MenuFeedback", "Menu")
+@Html.Action("MenuTop10", "Menu")
+<section class="ftco-section ftco-partner" style="background-color: rgb(235, 255, 235); margin-top: 0">
+    <div class="row d-flex justify-content-center ftco-animate" style="margin-bottom: 2cm" ;>
+        <h1 style="font-family: Tahoma " ;>Đối tác sản xuất</h1>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm ftco-animate">
+                <a href="#" class="partner"><img src="~/Content/assets/images/goodness.png" class="img-fluid" alt="Colorlib Template"></a>
+            </div>
+            <div class="col-sm ftco-animate">
+                <a href="#" class="partner"><img src="~/Content/assets/images/2.png" class="img-fluid" alt="Colorlib Template"></a>
+            </div>
+            <div class="col-sm ftco-animate">
+                <a href="#" class="partner"><img src="~/Content/assets/images/3.png" class="img-fluid" alt="Colorlib Template"></a>
+            </div>
+            <div class="col-sm ftco-animate">
+                <a href="#" class="partner"><img src="~/Content/assets/images/4.png" class="img-fluid" alt="Colorlib Template"></a>
+            </div>
+            <div class="col-sm ftco-animate">
+                <a href="#" class="partner"><img src="~/Content/assets/images/5.png" class="img-fluid" alt="Colorlib Template"></a>
+            </div>
+            <div class="col-sm ftco-animate">
+                <a href="#" class="partner"><img src="~/Content/assets/images/6.png" class="img-fluid" alt="Colorlib Template"></a>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<style>
+    .h2 {
+        font-family: Calibri
+    }
+
+    .name {
+        font-family: Calibri
+    }
+
+    .position {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
+    }
+
+    .line {
+        font-family: 'Times New Roman';
+        font-size: 20px;
+    }
+</style>
+@section scripts{
+    <script src="~/Content/assets/js/categories_custom.js"></script>
+}

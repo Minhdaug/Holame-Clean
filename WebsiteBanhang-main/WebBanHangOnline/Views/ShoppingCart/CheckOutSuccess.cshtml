@@ -1,0 +1,60 @@
+﻿@{
+    ViewBag.Title = "Đặt hàng thành công";
+}
+
+@section styles {
+    <style>
+        .order-success {
+            text-align: center;
+            padding: 40px 0;
+            background: #EBF0F5;
+            font-family: "Nunito Sans", "Helvetica Neue", sans-serif;
+        }
+
+            .order-success h1 {
+                color: #88B04B;
+                font-weight: 900;
+                font-size: 40px;
+                font-family:'Segoe UI';
+                margin-bottom: 10px;
+            }
+
+            .order-success p {
+                color: #404F5E;
+                font-size: 20px;
+                margin: 0;
+            }
+
+            .order-success .checkmark {
+                color: #9ABC66;
+                font-size: 100px;
+                line-height: 200px;
+                margin-left: -15px;
+            }
+
+            .order-success .card {
+                background: white;
+                padding: 60px;
+                border-radius: 4px;
+                box-shadow: 0 2px 3px #C8D0D8;
+                display: inline-block;
+                margin: 0 auto;
+            }
+    </style>
+    <link href="https://fonts.googleapis.com/css?family=Nunito+Sans:400,400i,700,900&display=swap" rel="stylesheet">
+}
+
+<div class="order-success">
+    <div class="card">
+        <div style="border-radius:200px; height:200px; width:200px; background: #F8FAF5; margin:0 auto;">
+            <i class="checkmark">✓</i>
+        </div>
+        <h1>Bạn đã đặt hàng thành công!</h1>
+        <p>Cảm ơn bạn đã sử dụng dịch vụ của Holame Clean!<br /> Chúng tôi đã gửi Email xác nhận đến bạn.</p>
+        <p>Bạn có thể click <a href="/">vào đây</a> để về trang chủ.</p>
+    </div>
+</div>
+
+@section scripts {
+    <script src="~/Content/assets/js/categories_custom.js"></script>
+}

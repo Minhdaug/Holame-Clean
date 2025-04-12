@@ -1,0 +1,89 @@
+﻿@model WebBanHangOnline.Models.EF.ReviewProduct
+
+<div class="add_review">
+    @using (Ajax.BeginForm("PostReview", "Review", new AjaxOptions
+    {
+        HttpMethod = "POST",
+        UpdateTargetId = "load_review",
+        OnSuccess = "OnSuccessRE",
+        OnFailure = "OnFailureRE",
+        OnBegin = "OnBeginRE"
+    }, new { @Id = "review_form" }))
+    {
+        @Html.AntiForgeryToken()
+
+       
+            <div>
+                <h1>Thêm đánh giá</h1>
+                @Html.TextBoxFor(x => x.FullName, new { @class = "form_input input_name", @placeholder = "Họ và tên*", @id = "review_name" })
+                @Html.TextBoxFor(x => x.Email, new { @class = "form_input input_email", @placeholder = "Email*", @id = "review_email" })
+                @Html.HiddenFor(x => x.UserName)
+                @Html.HiddenFor(x => x.ProductId, new { @Value = ViewBag.ProductId })
+                <input type="text" id="txtRate" name="Rate" value="4" style="visibility:hidden;" />
+            </div>
+            <div>
+                <h1>Đánh giá:</h1>
+                <ul class="user_star_rating">
+                    <li><i class="fa fa-star" aria-hidden="true"></i></li>
+                    <li><i class="fa fa-star" aria-hidden="true"></i></li>
+                    <li><i class="fa fa-star" aria-hidden="true"></i></li>
+                    <li><i class="fa fa-star" aria-hidden="true"></i></li>
+                    <li><i class="fa fa-star-o" aria-hidden="true"></i></li>
+                </ul>
+                @Html.TextAreaFor(x => x.Content, new
+                {
+                    @class = "input_review",
+                    @rows = "4",
+                    @placeholder = "Nhận xét của bạn về sản phẩm",
+                    required = "required" // Thêm thuộc tính required
+                })
+            </div>
+            <div class="text-left text-sm-right">
+                <button id="review_submit" type="submit" class="red_button review_submit_btn trans_300" value="Submit">submit</button>
+            </div>
+        
+    }
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('#review_form').on('submit', function (e) {
+            e.preventDefault();  // Ngừng hành động mặc định của form
+
+            var formData = $(this).serialize();  // Lấy dữ liệu từ form
+            var $btn = $('#review_submit');  // Nút submit
+
+            // Ngừng kích hoạt nút khi đang gửi
+            $btn.prop('disabled', true).text('Đang gửi...');
+
+            // Gửi yêu cầu AJAX
+            $.ajax({
+                url: '/Review/PostReview',
+                type: 'POST',
+                data: formData,
+                success: function (response) {
+                    if (response.Success) {
+                        // Xử lý nếu gửi thành công
+                        alert('Đã gửi bình luận thành công!');  // Hộp thoại thông báo
+                        location.reload();  // Tải lại trang sau khi click OK
+                    } else {
+                        // Xử lý nếu có lỗi
+                        alert('Có lỗi khi gửi bình luận.');
+                    }
+
+                    // Kích hoạt lại nút submit
+                    $btn.prop('disabled', false).text('Gửi bình luận');
+                },
+                error: function () {
+                    // Xử lý nếu xảy ra lỗi trong quá trình gửi
+                    alert('Đã có lỗi xảy ra.');
+                    $btn.prop('disabled', false).text('Gửi bình luận');
+                }
+            });
+        });
+    });
+
+
+</script>
+
+<script src="~/Content/assets/js/singlecustom.js"></script>

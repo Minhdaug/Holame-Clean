@@ -1,0 +1,123 @@
+﻿@model PagedList.PagedList<WebBanHangOnline.Models.EF.News>
+@using PagedList.Mvc;
+@using PagedList;
+@{
+    ViewBag.Title = "Index";
+}
+
+@Html.Action("MenuSlide", "Menu")
+
+<!-- Form tìm kiếm hiển thị ở đầu trang khi dùng mobile -->
+<div class="container d-block d-lg-none mt-4">
+    @using (Html.BeginForm("Index", "News", FormMethod.Get))
+    {
+        <div class="form-group">
+            <div class="input-group input-group-sm">
+                @Html.TextBox("Searchtext", null, new { @class = "form-control", placeholder = "Tìm kiếm tin tức..." })
+                <span class="input-group-append">
+                    <button type="submit" class="btn btn-primary">Tìm</button>
+                </span>
+            </div>
+        </div>
+    }
+</div>
+
+<section class="ftco-section ftco-degree-bg">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 ftco-animate">
+                <div class="row">
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var item in Model)
+                        {
+                            <div class="col-md-12 d-flex ftco-animate">
+                                <div class="blog-entry align-self-stretch d-md-flex">
+                                    <a href="/@item.Alias-n@(item.Id)" class="block-20" style="background-image: url('@item.Image');">
+                                    </a>
+                                    <div class="text d-block pl-md-4">
+                                        <div class="meta mb-3">
+                                            <div><a href="#">@item.CreatedDate.ToString("dd/MM/yyyy")</a></div>
+                                            <div><a href="#">@item.CreatedBy</a></div>
+                                        </div>
+                                        <h3 class="heading"><a href="/@item.Alias-n@(item.Id)">@item.Title</a></h3>
+                                        <p>@item.Description</p>
+                                        <p><a href="/@item.Alias-n@(item.Id)" class="btn btn-primary py-2 px-3">Xem chi tiết</a></p>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <p class="text-center">Không có tin tức nào.</p>
+                    }
+                </div>
+
+                <div class="text-center mt-4">
+                    <div class="row mt-5">
+                        <div class="col text-center ftco-animate">
+                            <div class="block-27">
+                                <ul>
+                                    @if (Model.HasPreviousPage)
+                                    {
+                                        <li><a href="@Url.Action("Index", new { page = Model.PageNumber - 1, Searchtext = Request["Searchtext"] })">&lt;</a></li>
+                                    }
+                                    else
+                                    {
+                                        <li class="disabled"><span>&lt;</span></li>
+                                    }
+
+                                    @for (int i = 1; i <= Model.PageCount; i++)
+                                    {
+                                        if (i == Model.PageNumber)
+                                        {
+                                            <li class="active"><span>@i</span></li>
+                                        }
+                                        else
+                                        {
+                                            <li><a href="@Url.Action("Index", new { page = i, Searchtext = Request["Searchtext"] })">@i</a></li>
+                                        }
+                                    }
+
+                                    @if (Model.HasNextPage)
+                                    {
+                                        <li><a href="@Url.Action("Index", new { page = Model.PageNumber + 1, Searchtext = Request["Searchtext"] })">&gt;</a></li>
+                                    }
+                                    else
+                                    {
+                                        <li class="disabled"><span>&gt;</span></li>
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="col-lg-4 sidebar ftco-animate">
+                <!-- Form tìm kiếm hiển thị ở sidebar trên desktop -->
+                <div class="sidebar-box d-none d-lg-block">
+                    @using (Html.BeginForm("Index", "News", FormMethod.Get))
+                    {
+                        <div class="form-group">
+                            <div class="input-group input-group-sm">
+                                @Html.TextBox("Searchtext", null, new { @class = "form-control", placeholder = "Search..." })
+                                <span class="input-group-append">
+                                    <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+                                </span>
+                            </div>
+                        </div>
+                    }
+                </div>
+                @Html.Action("PartialNewsCategory", "News")
+                @Html.Action("PartialRecent", "News")
+            </div>
+        </div>
+    </div>
+</section>
+
+@section scripts{
+    <script src="~/Content/assets/js/categories_custom.js"></script>
+}

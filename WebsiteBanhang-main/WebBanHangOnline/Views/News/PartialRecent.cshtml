@@ -1,0 +1,28 @@
+﻿@model List<WebBanHangOnline.Models.EF.News>
+
+<div class="sidebar-box ftco-animate">
+    <h3 class="heading">Đề xuất</h3>
+    @if (Model != null && Model.Any())
+    {
+        foreach (var item in Model)
+        {
+            <div class="block-21 mb-4 d-flex">
+                <a class="blog-img mr-4" href="/@item.Alias-n@(item.Id)" style="background-image: url(@item.Image);"></a>
+                <div class="text">
+                    <h3 class="heading-1"><a href="/@item.Alias-n@(item.Id)"><strong>@item.Title</strong></a></h3>
+                    <div class="meta">
+                        <div><a href="/@item.Alias-n@(item.Id)"><span class="icon-calendar"></span> @item.CreatedDate.ToString("MMM dd,yyyy")</a></div>
+                        <div><a href="/@item.Alias-n@(item.Id)"><span class="icon-person"></span> @item.CreatedBy</a></div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+</div>
+
+<style>
+    .heading-1 {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        font-weight: bold;
+    }
+</style>

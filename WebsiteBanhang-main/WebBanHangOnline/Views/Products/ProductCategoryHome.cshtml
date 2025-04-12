@@ -1,0 +1,13 @@
+﻿
+@model IEnumerable<WebBanHangOnline.Models.EF.ProductCategory>
+
+@if (Model != null && Model.Any())
+{
+    <ul class="list-unstyled">
+        @foreach (var item in Model)
+        {
+            <li><a href="/danh-muc-san-pham/@item.Alias-@(item.Id)" class="py-2 d-block @(ViewBag.CateId == item.Id ? "active" : "")">@item.Title</a></li>
+
+        }
+    </ul>
+}

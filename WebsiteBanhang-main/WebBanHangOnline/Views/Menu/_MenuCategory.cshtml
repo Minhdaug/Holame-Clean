@@ -1,0 +1,38 @@
+﻿@model IEnumerable<WebBanHangOnline.Models.EF.ProductCategory>
+
+<section class="ftco-section ftco-category ftco-no-pt" style="background-color: rgb(250, 255, 238)">
+    <div class="container">
+        <!-- ✅ Row thứ hai: danh mục sản phẩm -->
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class="section-title mb-5 text-success ftco-animate" style="font-weight: 600; margin-top: 1cm">Danh Mục Sản Phẩm</h2>
+                <div class="row">
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var item in Model)
+                        {
+                            <div class="col-md-6 col-lg-3 ftco-animate">
+                                <div class="product">
+                                    <a href="/chi-tiet/@item.Alias-p@(item.Id)" class="img-prod">
+                                        <div class="product-img-wrapper">
+                                            <img class="img-fluid product-img" src="@item.Icon" alt="@item.Title" loading="lazy"/>
+                                        </div>
+                                        <div class="overlay"></div>
+                                    </a>
+                                    <div class="text py-3 pb-4 px-3 text-center">
+                                        <h3>
+                                            <a href="/chi-tiet/@item.Alias-p@(item.Id)">
+                                                @item.Title
+                                            </a>
+                                        </h3>
+                                    </div>
+                                </div>
+                            </div>                          
+                        }
+                    }
+                </div>
+                <a href="/san-pham" class="btn btn-outline-success mt-3 ftco-animate">Xem Toàn Bộ</a>
+            </div>
+        </div>
+    </div>
+</section>

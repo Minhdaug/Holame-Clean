@@ -1,0 +1,287 @@
+﻿@model WebBanHangOnline.Models.EF.Product
+@{
+    ViewBag.Title = Model.SeoTitle ?? Model.Title;
+    ViewBag.SeoDescription = Model.SeoDescription ?? Model.Title;
+    ViewBag.SeoKeyWord = Model.SeoKeywords ?? Model.Title;
+}
+<section class="ftco-section">
+    <div class="container">
+        <div class="row">
+            <!-- Cột ảnh sản phẩm -->
+            <div class="col-lg-6 mb-5 ftco-animate">
+                <div class="product-gallery">
+                    @{
+                        var defaultImg = Model.ProductImage.FirstOrDefault(img => img.IsDefault);
+                    }
+                    <div class="main-image">
+                        <img id="mainImage"
+                             src="@(defaultImg != null ? defaultImg.Image : Model.ProductImage.First().Image)"
+                             alt="Ảnh sản phẩm" />
+                    </div>
+
+                    <div class="thumbnail-list">
+                        @foreach (var img in Model.ProductImage)
+                        {
+                            <img src="@img.Image"
+                                 alt="Ảnh phụ"
+                                 class="thumbnail-img @(img.IsDefault ? "active-thumb" : "")" />
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cột thông tin sản phẩm -->
+            <div class="col-lg-6 product-details pl-md-5 ftco-animate">
+                <h3>@Model.Title</h3>
+                <div class="rating d-flex">
+                    <p class="text-left mr-4">
+                        <a href="#" class="mr-2">5.0</a>
+                        @for (int i = 0; i < 5; i++)
+                        {
+                            <a href="#"><span class="ion-ios-star-outline"></span></a>
+                        }
+                    </p>
+                    <p class="text-left">
+                        <a href="#" class="mr-2" style="color: #000;">@Model.ViewCount <span style="color: #bbb;">Lượt xem</span></a>
+                    </p>
+                </div>
+
+                @if (Model.PriceSale < Model.Price)
+                {
+                    <p class="price"><span>@WebBanHangOnline.Common.Common.FormatNumber(Model.PriceSale, 0) ₫</span></p>
+                    <p><del>@WebBanHangOnline.Common.Common.FormatNumber(Model.Price, 0) ₫</del></p>
+                }
+                else
+                {
+                    <p class="price"><span>@WebBanHangOnline.Common.Common.FormatNumber(Model.Price, 0) ₫</span></p>
+                }
+
+                <p> @Html.Raw(Model.Description)</p>
+
+                <div class="row mt-4">
+                    @if (Model.ProductFragrances != null && Model.ProductFragrances.Any())
+                    {
+                        <div class="col-md-6">
+                            <div class="form-group d-flex">
+                                <div class="select-wrap">
+                                    <div class="icon"><span class="ion-ios-arrow-down"></span></div>
+                                    <select name="fragrance" id="fragranceSelect" class="form-control">
+                                        <option value="">Chọn mùi hương</option>
+                                        @foreach (var fragrance in Model.ProductFragrances)
+                                        {
+                                            <option value="@fragrance.Fragrance">@fragrance.Fragrance</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    <div class="w-100"></div>
+                    <div class="input-group col-md-6 d-flex mb-3">
+                        <span class="input-group-btn mr-2">
+                            <button type="button" class="quantity-left-minus btn" data-type="minus" data-field="">
+                                <i class="ion-ios-remove"></i>
+                            </button>
+                        </span>
+                        <input type="text" id="quantity_value" name="quantity" class="form-control input-number" value="1" min="1" max="100">
+
+                        <span class="input-group-btn ml-2">
+                            <button type="button" class="quantity-right-plus btn" data-type="plus" data-field="">
+                                <i class="ion-ios-add"></i>
+                            </button>
+                        </span>
+                    </div>
+                    <div class="w-100"></div>
+                </div>
+                <p>
+                    <a href="#" id="btnAddToCart" class="btn btn-black py-3 px-5">Thêm vào giỏ hàng</a>
+                </p>
+            </div>
+        </div>
+
+    </div>
+    <!-- Tab Section -->
+    <div class="container">
+        <div class="row justify-content-center mb-3 pb-3">
+            <div class="col-md-12 heading-section text-center ftco-animate">
+                <span class="subheading" style="font-size: 29px">Mô tả sản phẩm</span>
+                <h2 class="mb-4">Sản phẩm @Model.Title</h2>
+                <div style="font-size: 19px; text-align: left;">
+                    @Html.Raw(Model.Detail)
+                </div>
+            </div>
+        </div>
+        <div id="tab_3" class="tab_container">
+            <div class="row">
+
+                <!-- User Reviews -->
+
+                <div class="col-lg-6 reviews_col ftco-animate">
+                    @Html.Action("_Load_Review", "Review", new { productId = Model.Id })
+                </div>
+
+                <!-- Add Review -->
+
+                <div id="form_review" class="col-lg-6 add_review_col ftco-animate">
+
+
+                    @Html.Action("_Review", "Review", new { productId = Model.Id })
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+@section scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const mainImg = document.getElementById("mainImage");
+            const thumbnails = document.querySelectorAll(".thumbnail-img");
+
+            thumbnails.forEach(thumb => {
+                thumb.addEventListener("click", function () {
+                    // Đổi ảnh lớn
+                    mainImg.src = this.src;
+
+                    // Cập nhật class active-thumb
+                    thumbnails.forEach(t => t.classList.remove("active-thumb"));
+                    this.classList.add("active-thumb");
+                });
+            });
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const mainImg = document.getElementById("mainImage");
+            const thumbnails = document.querySelectorAll(".thumbnail-img");
+
+            thumbnails.forEach(thumb => {
+                thumb.addEventListener("click", function () {
+                    mainImg.src = this.src;
+                    thumbnails.forEach(t => t.classList.remove("active-thumb"));
+                    this.classList.add("active-thumb");
+                });
+            });
+
+            // 👉 Xử lý tăng giảm số lượng
+
+        });
+        document.addEventListener("DOMContentLoaded", function () {
+            // Tăng giảm số lượng
+            const minusBtn = document.querySelector(".quantity-left-minus");
+            const plusBtn = document.querySelector(".quantity-right-plus");
+            const quantityInput = document.getElementById("quantity_value");
+
+            minusBtn.addEventListener("click", function (e) {
+                e.preventDefault();
+                let currentVal = parseInt(quantityInput.value);
+                if (!isNaN(currentVal) && currentVal > 1) {
+                    quantityInput.value = currentVal - 1;
+                }
+            });
+
+            plusBtn.addEventListener("click", function (e) {
+                e.preventDefault();
+                let currentVal = parseInt(quantityInput.value);
+                if (!isNaN(currentVal)) {
+                    quantityInput.value = currentVal + 1;
+                }
+            });
+
+            // Xử lý thêm vào giỏ hàng
+            $(document).ready(function () {
+            $('#btnAddToCart').click(function (e) {
+                e.preventDefault();
+                var productId = @Model.Id;
+                var quantity = parseInt($('#quantity_value').val());
+                var fragranceDropdown = $('#fragranceSelect');
+
+                var fragrance = fragranceDropdown.length > 0 ? fragranceDropdown.val() : "";
+
+                // Chỉ kiểm tra bắt buộc nếu dropdown tồn tại
+                if (fragranceDropdown.length > 0 && !fragrance) {
+                    alert("Vui lòng chọn mùi hương trước khi thêm vào giỏ hàng.");
+                    return;
+                }
+
+                $.ajax({
+                    url: '/ShoppingCart/AddToCart',
+                    type: 'POST',
+                    data: {
+                        id: productId,
+                        quantity: quantity,
+                        fragrance: fragrance
+                    },
+                    success: function (res) {
+                        if (res.Success) {
+                            alert(res.msg);
+                            location.reload();
+                        } else {
+                            alert("Lỗi: " + res.msg);
+                        }
+                    }
+                });
+            });
+
+        });
+        });
+
+
+    </script>
+    
+
+}
+<style>
+    .product-gallery {
+        max-width: 100%;
+        margin-bottom: 30px;
+    }
+
+    .main-image img {
+        width: 100%;
+        height: 650px; /* Tăng chiều cao ảnh lớn */
+        object-fit: contain;
+        border: 1px solid #ccc;
+        padding: 8px;
+        background-color: #fff;
+        box-shadow: 0 0 10px rgba(0,0,0,0.05);
+    }
+
+    .thumbnail-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin-top: 20px;
+        justify-content: center;
+    }
+
+    .thumbnail-img {
+        width: 250px; /* Tăng kích thước thumbnail */
+        height: 250px;
+        object-fit: cover;
+        border: 2px solid transparent;
+        cursor: pointer;
+        transition: 0.3s;
+        border-radius: 6px;
+    }
+
+        .thumbnail-img:hover,
+        .thumbnail-img.active-thumb {
+            border-color: #28a745;
+            box-shadow: 0 0 8px rgba(0,0,0,0.1);
+        }
+
+    .thumbnail-img {
+        width: 23%; /* Hiển thị 4 ảnh đều nhau */
+        height: auto;
+        max-height: 120px;
+    }
+
+    .thumbnail-list {
+        display: flex;
+        flex-wrap: nowrap; /* Không cho xuống dòng */
+        gap: 15px;
+        margin-top: 20px;
+        justify-content: flex-start;
+        overflow-x: auto; /* Cuộn ngang nếu quá dài */
+    }
+</style>

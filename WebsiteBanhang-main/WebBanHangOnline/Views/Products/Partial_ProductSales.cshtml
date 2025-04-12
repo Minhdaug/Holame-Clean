@@ -1,0 +1,84 @@
+﻿@model IEnumerable<WebBanHangOnline.Models.EF.Product>
+@using WebBanHangOnline.Common
+@if (Model != null && Model.Any())
+{
+
+    <div class="best_sellers">
+        <div class="container">
+            <div class="row">
+                <div class="col text-center">
+                    <div class="section_title new_arrivals_title">
+                        <h1>Best Sellers</h1>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                @if (Model != null && Model.Any())
+                {
+                    foreach (var item in Model)
+                    {
+                        var strImage = "";
+                        var img = item.ProductImage.FirstOrDefault(x => x.IsDefault);
+                        if (img != null)
+                        {
+                            strImage = img.Image;
+                        }
+
+                        <div class="col-md-6 col-lg-3 ftco-animate">
+                            <div class="product">
+                                <a href="/chi-tiet/@item.Alias-p@(item.Id)" class="img-prod">
+                                    <div class="product-img-wrapper">
+                                        <img class="img-fluid product-img" src="@strImage" alt="@item.Title" loading="lazy"/>
+                                    </div>
+                                    @if (item.PriceSale < item.Price)
+                                    {
+                                        <span class="status">Sale</span>
+                                    }
+                                    <div class="overlay"></div>
+                                </a>
+                                <div class="text py-3 pb-4 px-3 text-center">
+                                    <h3>
+                                        <a href="/chi-tiet/@item.Alias-p@(item.Id)">
+                                            @item.Title
+                                        </a>
+                                    </h3>
+                                    <div class="d-flex">
+                                        <div class="pricing">
+                                            @if (item.PriceSale < item.Price)
+                                            {
+                                                <p class="price">
+                                                    <span class="mr-2 price-dc">@WebBanHangOnline.Common.Common.FormatNumber(item.Price, 0)</span>
+                                                    <span class="price-sale">@WebBanHangOnline.Common.Common.FormatNumber(item.PriceSale, 0)</span>
+                                                </p>
+                                            }
+                                            else
+                                            {
+                                                <p class="price">
+                                                    <span>@WebBanHangOnline.Common.Common.FormatNumber(item.Price, 0)</span>
+                                                </p>
+                                            }
+                                        </div>
+                                    </div>
+                                    <div class="bottom-area d-flex px-3">
+                                        <div class="m-auto d-flex">
+                                            <a href="/chi-tiet/@item.Alias-p@(item.Id)" class="add-to-cart d-flex justify-content-center align-items-center text-center">
+                                                <span><i class="ion-ios-menu"></i></span>
+                                            </a>
+                                            @if (item.ProductFragrances == null || !item.ProductFragrances.Any())
+                                            {
+                                                <a href="#" class="buy-now d-flex justify-content-center align-items-center mx-1 btnAddToCart" data-id="@item.Id">
+                                                    <span><i class="ion-ios-cart"></i></span>
+                                                </a>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+
+}
